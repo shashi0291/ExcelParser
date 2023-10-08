@@ -48,7 +48,7 @@ public class ExcelFileReader {
         return mapCertificationIdToName;
     }
 
-    public Map<String, String> processCertificateExcel(Map<String, String> mapCertificateIdToName) {
+    public Map<String, String> processCertificateIdToEmpIdExcel(Map<String, String> mapCertificateIdToName) {
         if (file == null || fileType == null) return Collections.emptyMap();
 
         HashMap<String, String > mapEmpIdToCertificateId = new HashMap<>();
@@ -76,7 +76,7 @@ public class ExcelFileReader {
                             existingValue = existingValue + cellCertificateId.getStringCellValue() + ",";
                             mapEmpIdToCertificateId.put(key, existingValue);
                         } else {
-                            mapEmpIdToCertificateId.put(key, currentValue);
+                            mapEmpIdToCertificateId.put(key, currentValue + ",");
                         }
                     }
                 }

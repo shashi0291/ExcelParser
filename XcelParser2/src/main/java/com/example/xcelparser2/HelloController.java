@@ -39,7 +39,7 @@ public class HelloController {
             // Process the selected file
             System.out.println("Selected file: " + selectedFile.getAbsolutePath());
             ExcelFileReader excelFileReader = new ExcelFileReader(selectedFile, FileType.CERTIFICATE);
-            mapEmpIdToCertificateId = excelFileReader.processCertificateExcel(mapCertificateIdToName);
+            mapEmpIdToCertificateId = excelFileReader.processCertificateIdToEmpIdExcel(mapCertificateIdToName);
         } else {
             System.out.println("File selection canceled");
         }
@@ -106,7 +106,7 @@ public class HelloController {
                         } else {
                             mapCertificateIdToCount.put(
                                     certificateId,
-                                    0
+                                    mapCertificateIdToCount.getOrDefault(certificateId, 0)
                             );
                         }
                     }
