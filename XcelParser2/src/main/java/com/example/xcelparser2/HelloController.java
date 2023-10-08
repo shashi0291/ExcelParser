@@ -55,7 +55,6 @@ public class HelloController {
             System.out.println("Selected file: " + selectedFile.getAbsolutePath());
             ExcelFileReader excelFileReader = new ExcelFileReader(selectedFile, FileType.SORT_PLAN);
             mapShiftTimeToEmpId = excelFileReader.processSortPlanExcel();
-
         } else {
             System.out.println("File selection canceled");
         }
@@ -63,9 +62,21 @@ public class HelloController {
 
     @FXML
     protected void onProcessButtonClick() {
-        System.out.println("Starting to process data");
+
         List<FinalResult> finalResult = processResult();
         System.out.println(finalResult);
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select an Excel File");
+        java.io.File selectedFile = fileChooser.showOpenDialog(new Stage());
+        if (selectedFile != null) {
+            // Process the selected file
+            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+            ExcelFileReader excelFileReader = new ExcelFileReader(selectedFile, FileType.SORT_PLAN);
+            excelFileReader.updateResultInExcel(finalResult, mapCertificateIdToName);
+        } else {
+            System.out.println("File selection canceled");
+        }
     }
 
     private List<FinalResult> processResult() {

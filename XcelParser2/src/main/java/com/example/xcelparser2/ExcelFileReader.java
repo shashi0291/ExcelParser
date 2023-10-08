@@ -9,6 +9,8 @@ import java.util.*;
 
 public class ExcelFileReader {
 
+    private static final String FINAL_SHEET_NAME = "Final Result";
+
     private final File file;
     private final FileType fileType;
 
@@ -139,7 +141,10 @@ public class ExcelFileReader {
             FileInputStream inputStream = new FileInputStream(file);
             Workbook workbook = new XSSFWorkbook(inputStream);
 
-            Sheet sheetFinalResult = workbook.createSheet("Final Result");
+            int finalSheetIndex = getSheetIndexByName(workbook, FINAL_SHEET_NAME);
+            if (finalSheetIndex != -1) workbook.removeSheetAt(finalSheetIndex);
+
+            Sheet sheetFinalResult = workbook.createSheet(FINAL_SHEET_NAME);
             Row row = sheetFinalResult.createRow(0);
             row.createCell(0).setCellValue("Shift Start Time");
             row.createCell(1).setCellValue("Certificate Id");
@@ -150,20 +155,20 @@ public class ExcelFileReader {
             for (FinalResult finalResult : finalResultList) {
 
                 Row newRow = sheetFinalResult.createRow(index);
-                newRow.createCell(0).setCellValue(finalResult.sortStartTime); // sort start time
+                newRow.createCell(0).setCellValue(finalResult.sortStartTime.toString()); // sort start time
 
                 for (Map.Entry<String, Integer> entry : finalResult.mapCertificateIdToCount.entrySet()) {
                     String certificateId = entry.getKey();
                     String certificateName = mapCertificateIdToName.get(certificateId);
                     newRow.createCell(1).setCellValue(certificateId); // certificate id
                     newRow.createCell(2).setCellValue(certificateName); // certification name
-                    newRow.createCell(2).setCellValue(entry.getValue()); // certification count
+                    newRow.createCell(3).setCellValue(entry.getValue()); // certification count
                     index++;
                     newRow = sheetFinalResult.createRow(index);
                 }
             }
 
-            try (FileOutputStream outputStream = new FileOutputStream("existing_file.xlsx")) {
+            try (FileOutputStream outputStream = new FileOutputStream(file)) {
                 workbook.write(outputStream);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -172,4 +177,15 @@ public class ExcelFileReader {
             throw new RuntimeException(e);
         }
     }
+
+    private int getSheetIndexByName(Workbook workbook, String sheetName) {
+        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+            if (workbook.getSheetName(i).equalsIgnoreCase(sheetName)) {
+                return i;
+            }
+        }
+        return -1; // Sheet not found
+    }
 }
+
+
